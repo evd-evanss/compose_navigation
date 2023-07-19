@@ -1,0 +1,23 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "NavigationCompose"
+include ':app'
+include ':order'
+include ':navigation'
+include ':ds'
+include ':data'
+include ':commons'
+include ':shoppingcart'
+include ':splash'

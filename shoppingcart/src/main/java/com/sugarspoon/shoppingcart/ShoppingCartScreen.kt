@@ -35,8 +35,7 @@ class ShoppingCartRouteImpl @Inject constructor(
     @Composable
     override fun Screen(navHostController: NavHostController, entry: NavBackStackEntry) {
         val state by viewModel.state.collectAsState()
-        val order =
-            navHostController.previousBackStackEntry?.savedStateHandle?.get<List<Order>>("user")
+        val order = navHostController.previousBackStackEntry?.savedStateHandle?.get<List<Order>>("user")
         LaunchedEffect(true) {
             launch {
                 order?.let { viewModel.getOrder(it) }

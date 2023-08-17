@@ -6,9 +6,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -18,11 +19,12 @@ import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SplashRouteImpl @Inject constructor(): NavigationRoute {
+class SplashRouteImpl @Inject constructor() : NavigationRoute {
 
-    @Composable
-    override fun Screen(navHostController: NavHostController, entry: NavBackStackEntry) {
-        SplashScreen(navController = navHostController, routes = this.routes)
+    override fun NavGraphBuilder.screen(navHostController: NavHostController) {
+        composable(route = routes.SPLASH) { entry ->
+            SplashScreen(navController = navHostController, routes = this@SplashRouteImpl.routes)
+        }
     }
 }
 

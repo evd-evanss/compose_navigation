@@ -1,7 +1,6 @@
 package com.sugarspoon.navigation
 
-import androidx.compose.runtime.Composable
-import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 
 interface NavigationRoute {
@@ -10,15 +9,12 @@ interface NavigationRoute {
         const val SPLASH = "splash"
         const val ORDER = "order"
         const val SHOPPING_CART = "shopping_cart"
+        const val SUCCESS = "success"
     }
 
     val routes: Routes
         get() = Routes
 
-    @Composable
-    fun Screen(
-        navHostController: NavHostController,
-        entry: NavBackStackEntry
-    )
+    fun NavGraphBuilder.screen(navHostController: NavHostController)
 
 }

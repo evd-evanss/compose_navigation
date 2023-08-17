@@ -15,8 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
 import com.sugarspoon.data.model.Order
 import com.sugarspoon.ds.components.SugarButton
 import com.sugarspoon.ds.components.SugarCard
@@ -32,55 +33,60 @@ class ShoppingCartRouteImpl @Inject constructor(
     private val viewModel: ShoppingCartViewModel
 ) : NavigationRoute {
 
-    @Composable
-    override fun Screen(navHostController: NavHostController, entry: NavBackStackEntry) {
-        val state by viewModel.state.collectAsState()
-        val order = navHostController.previousBackStackEntry?.savedStateHandle?.get<List<Order>>("user")
-        LaunchedEffect(true) {
-            launch {
-                order?.let { viewModel.getOrder(it) }
+    override fun NavGraphBuilder.screen(navHostController: NavHostController) {
+        composable(routes.SHOPPING_CART) {
+            val state by viewModel.state.collectAsState()
+            val order =
+                navHostController.previousBackStackEntry?.savedStateHandle?.get<List<Order>>("user")
+            LaunchedEffect(true) {
+                launch {
+                    order?.let { viewModel.getOrder(it) }
+                }
             }
-        }
-        if(state.displayFinishOrder) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.weight(1f))
-                Image(painter = painterResource(id = R.drawable.success_icon), contentDescription = null)
-                SugarText(
-                    text = "Your order has been completed successfully, enjoy your lemonades!",
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                SugarButton(
-                    text = "CLOSE",
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        viewModel.clearAll()
-                        navHostController.clearBackStack(route = routes.ORDER)
-                        navHostController.navigate(route = routes.SPLASH)
-                    }
-                )
+            if (state.displayFinishOrder) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    Image(
+                        painter = painterResource(id = R.drawable.success_icon),
+                        contentDescription = null
+                    )
+                    SugarText(
+                        text = "Your order has been completed successfully, enjoy your lemonades!",
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    SugarButton(
+                        text = "CLOSE",
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            viewModel.clearAll()
+                            navHostController.clearBackStack(route = routes.ORDER)
+                            navHostController.navigate(route = routes.SPLASH)
+                        }
+                    )
+                }
+            } else {
+                ShoppingCartScreen(
+                    state = state,
+                    displayEmptyState = order.isNullOrEmpty(),
+                    viewModel = viewModel
+                ) {
+                    navHostController.popBackStack()
+                }
             }
-        } else {
-            ShoppingCartScreen(
-                state = state,
-                displayEmptyState = order.isNullOrEmpty(),
-                viewModel = viewModel
-            ) {
-                navHostController.popBackStack()
-            }
-        }
 
-        SugarLoading(
-            display = state.isLoading,
-            onHide = viewModel::displayLoading,
-            actionOnFinish = viewModel::displayFinishOrder
-        )
+            SugarLoading(
+                display = state.isLoading,
+                onHide = viewModel::displayLoading,
+                actionOnFinish = viewModel::displayFinishOrder
+            )
+        }
     }
 }
 

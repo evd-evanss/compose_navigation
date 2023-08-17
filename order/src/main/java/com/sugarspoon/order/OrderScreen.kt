@@ -12,8 +12,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
 import com.sugarspoon.ds.components.SugarButton
 import com.sugarspoon.ds.components.SugarCardCheckBox
 import com.sugarspoon.ds.components.SugarText
@@ -25,15 +26,16 @@ import javax.inject.Inject
 
 class OrderRouteImpl @Inject constructor(
     private val viewModel: OrderViewModel,
-): NavigationRoute {
+) : NavigationRoute {
 
-    @Composable
-    override fun Screen(navHostController: NavHostController, entry: NavBackStackEntry) {
-        OrderScreen(
-            viewModel = viewModel,
-            navHostController = navHostController,
-            routes = routes
-        )
+    override fun NavGraphBuilder.screen(navHostController: NavHostController) {
+        composable(routes.ORDER) {
+            OrderScreen(
+                viewModel = viewModel,
+                navHostController = navHostController,
+                routes = routes
+            )
+        }
     }
 }
 
@@ -73,7 +75,10 @@ private fun OrderScreen(
             onCheckedChange = viewModel::onChoose500ml
         )
         Spacer(modifier = Modifier.weight(2f))
-        SugarText(modifier = Modifier.padding(16.dp), text = "Total R$ ${format(Locale.getDefault(), "%.2f", state.amount)}")
+        SugarText(
+            modifier = Modifier.padding(16.dp),
+            text = "Total R$ ${format(Locale.getDefault(), "%.2f", state.amount)}"
+        )
         SugarButton(
             text = "GO TO SHOPPING CART",
             modifier = Modifier.fillMaxWidth()
